@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2e7d32">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIT MHAN Distribution</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="no-print">
+        <h1>SIT MHAN Distribution</h1>
+    </header>
+
+    <main class="no-print">
+        
+        <!-- Home Page -->
+        <section id="page-home" class="page active">
+            <div class="card today-card">
+                <p>Today Sales (ယနေ့အရောင်းစုစုပေါင်း)</p>
+                <h2 id="home-total-sales">0 ကျပ်</h2>
+            </div>
+            <div class="grid-2">
+                <div class="card cost-card">
+                    <p>Total Cost (ရောင်းရပစ္စည်းအရင်းစုစုပေါင်း)</p>
+                    <h3 id="home-total-cost">0 ကျပ်</h3>
+                </div>
+                <div class="card profit-card">
+                    <p>Net Profit (အမြတ်စုစုပေါင်း)</p>
+                    <h3 id="home-profit">0 ကျပ်</h3>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Recent Sales (လတ်တလော အရောင်းမှတ်တမ်း)</h4>
+                <ul id="recent-sales-list"></ul>
+            </div>
+        </section>
+
+        <!-- Sell Page -->
+        <section id="page-sell" class="page">
+            <div class="card">
+                <label><b>Customer Selection</b></label>
+                <input type="text" id="customer-search" placeholder="ဆိုင်အမည် ရိုက်ထည့်ပါ..." oninput="filterCustomer()">
+                <select id="customer-dropdown" onchange="selectCustomer()">
+                    <option value="">No customer</option>
+                </select>
+            </div>
+            <div class="card">
+                <button class="btn-block btn-search-product" onclick="openProductModal()">➕ Search Products</button>
+            </div>
+            <div class="card">
+                <h3>Current Sale (ခြင်းတောင်း)</h3>
+                <div id="cart-items" class="cart-empty-text">Cart is empty</div>
+                <div class="input-group">
+                    <label>Discount (လျှော့ပေးငွေ):</label>
+                    <input type="number" id="discount" placeholder="0" oninput="calculateSellPage()">
+                </div>
+                <div class="summary-box">
+                    <div class="summary-row"><span>Total:</span><span id="sell-total">0 K</span></div>
+                    <div class="summary-row font-discount"><span>Discount:</span><span id="sell-discount-val">0 K</span></div>
+                    <hr class="summary-divider">
+                    <div class="summary-row font-grand-total"><span>Grand Total:</span><span id="sell-grand-total">0 K</span></div>
+                </div>
+                <button class="btn-block btn-complete" onclick="completeSale()">Complete Sale</button>
+            </div>
+        </section>
+
+        <!-- Products Page -->
+        <section id="page-products" class="page">
+            <div class="card" id="product-form-card">
+                <h3 id="product-form-title">Add New Product</h3>
+                <input type="hidden" id="edit-product-index" value="-1">
+                <input type="text" id="p-name" placeholder="Product Name">
+                <input type="number" id="p-price" placeholder="Sell Price">
+                <input type="number" id="p-cost" placeholder="Cost">
+                <input type="number" id="p-stock" placeholder="Stock Quantity">
+                <input type="number" id="p-alert" placeholder="Low Stock Alert" value="5">
+                <div id="product-action-buttons">
+                    <button class="btn-block btn-save-product" onclick="saveProduct()">Save Product</button>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Product List</h3>
+                <ul id="product-list"></ul>
+            </div>
+        </section>
+
+        <!-- Customers Page -->
+        <section id="page-customers" class="page">
+            <div class="card">
+                <h3>Add New Customer</h3>
+                <input type="text" id="c-name" placeholder="Customer Name">
+                <button class="btn-block btn-save-customer" onclick="addCustomer()">Save Customer</button>
+            </div>
+            <div class="card">
+                <h3>Customer List</h3>
+                <ul id="customer-list"></ul>
+            </div>
+        </section>
+
+        <!-- Reports Page -->
+        <section id="page-reports" class="page">
+    <!-- Report Type Tabs -->
+<div class="card" style="padding: 8px;">
+    <div style="display: flex; gap: 10px;">
+        <button onclick="setReportType('daily')" id="tab-daily" class="report-tab active">📅 Daily Report</button>
+        <button onclick="setReportType('monthly')" id="tab-monthly" class="report-tab">📆 Monthly Report</button>
+    </div>
+</div>
+
+<!-- Daily Report Section -->
+<div id="daily-report-section">
+    <div class="card">
+        <h3>Date range</h3>
+        <input type="date" id="report-start-date" onchange="renderReports()">
+        <input type="date" id="report-end-date" onchange="renderReports()">
+    </div>
+</div>
+
+<!-- Monthly Report Section (hidden by default) -->
+<div id="monthly-report-section" style="display: none;">
+    <div class="card">
+        <h3>Select Month</h3>
+        <input type="month" id="report-month" onchange="renderReports()">
+    </div>
+</div>
+    
+    <!-- Stats Cards -->
+    <div class="grid-2">
+        <div class="card"><p>Revenue</p><h3 id="rep-revenue">0 K</h3></div>
+        <div class="card"><p>Profit</p><h3 id="rep-profit">0 K</h3></div>
+        <div class="card"><p>Expenses</p><h3 id="rep-expense">0 K</h3></div>
+        <div class="card"><p>Net</p><h3 id="rep-net">0 K</h3></div>
+    </div>
+    
+    <!-- Transaction History -->
+    <div class="card">
+        <h3>Transaction history</h3>
+        <ul id="report-sales-list"></ul>
+    </div>
+    
+    <!-- Add expense -->
+    <div class="card">
+        <h3>Add expense</h3>
+        <input type="text" id="exp-title" placeholder="Expense title">
+        <input type="number" id="exp-amount" placeholder="Amount">
+        <button class="btn-block btn-save-product" onclick="saveExpense()">Save expense</button>
+    </div>
+    
+    <!-- Best sellers -->
+    <div class="card">
+        <h3>Best sellers</h3>
+        <div id="top-selling-container"></div>
+    </div>
+    
+    <!-- Recent expenses -->
+    <div class="card">
+        <h3>Recent expenses</h3>
+        <ul id="report-expense-list"></ul>
+    </div>
+</section>
+
+        <!-- Settings Page -->
+        <section id="page-settings" class="page">
+    <div class="card">
+        <h3>⚙️ Settings</h3>
+        
+        <!-- Paper Size Setting -->
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 10px;">📄 Paper Size (စာရွက်အရွယ်အစား)</label>
+            <div style="display: flex; gap: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="radio" name="paper-size" value="58" onchange="setPaperSize('58')"> 58mm (Thermal Printer)
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="radio" name="paper-size" value="80" checked onchange="setPaperSize('80')"> 80mm (Standard)
+                </label>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <button class="btn-block" style="background:#1976d2;" onclick="backupToExcel()">📥 Data Backup</button>
+        <input type="file" id="restore-file" accept=".csv" onchange="restoreData(event)" style="margin-top: 10px;">
+        <hr>
+        <button class="btn-block" style="background:#c62828;" onclick="clearAllData()">Clear All Data</button>
+    </div>
+</section>
+
+    </main>
+    
+    <!-- Sale Details Modal -->
+<div id="details-modal" class="modal">
+    <div class="modal-content" style="max-width: 400px; height: auto; border-radius: 28px;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1e3a2f, #2e7d32); border-radius: 28px 28px 0 0;">
+            <h2 style="margin:0;">📋 Sale Details</h2>
+            <button class="close-btn" onclick="closeDetailsModal()" style="font-size: 28px;">×</button>
+        </div>
+        <div class="modal-body" id="details-modal-body" style="padding: 20px; background: white;">
+            <!-- Content will go here -->
+        </div>
+        <div class="modal-footer" style="display: flex; gap: 12px; padding: 16px;">
+            <button class="btn-block" onclick="closeDetailsModal()" style="background: #757575; margin:0;">Close</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal no-print">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Products</h2>
+                <button class="close-btn" onclick="closeProductModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="products-grid" class="products-grid"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-block" onclick="confirmSelectedProducts()">✔️ Done</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+function setPaperSize(size) {
+    localStorage.setItem('paperSize', size);
+}
+// Load saved paper size on page load
+window.onload = function() {
+    let savedSize = localStorage.getItem('paperSize');
+    if(savedSize) {
+        let radio = document.querySelector('input[value="' + savedSize + '"]');
+        if(radio) radio.checked = true;
+    }
+    // ... your existing onload code
+};
+</script>
+
+    <!-- Voucher Modal -->
+    <div id="voucher-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-body receipt-print-area" id="voucher-receipt-body"></div>
+            <div class="modal-footer no-print" style="display: flex; flex-direction: row; gap: 12px; padding: 16px;">
+    <button style="flex: 1; margin: 0; background: #2e7d32;" class="btn-block" onclick="printVoucher()">🖨️ Print</button>
+    <button style="flex: 1; margin: 0; background: #757575;" class="btn-block" onclick="closeVoucherModal()">Close</button>
+</div>
+        </div>
+    </div>
+
+    <!-- Edit Voucher Modal -->
+    <div id="edit-voucher-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Voucher</h2>
+                <button class="close-btn" onclick="closeEditVoucherModal()">×</button>
+            </div>
+            <div class="modal-body" id="edit-voucher-body"></div>
+            <div class="modal-footer">
+                <button class="btn-block btn-complete" onclick="updateVoucherData()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav no-print">
+        <div id="nav-home" class="nav-item active" onclick="switchPage('home')"><span class="nav-icon">🏠</span><br>Home</div>
+        <div id="nav-sell" class="nav-item" onclick="switchPage('sell')"><span class="nav-icon">🛒</span><br>Sell</div>
+        <div id="nav-products" class="nav-item" onclick="switchPage('products')"><span class="nav-icon">📦</span><br>Products</div>
+        <div id="nav-customers" class="nav-item" onclick="switchPage('customers')"><span class="nav-icon">👥</span><br>Customers</div>
+        <div id="nav-reports" class="nav-item" onclick="switchPage('reports')"><span class="nav-icon">📊</span><br>Reports</div>
+        <div id="nav-settings" class="nav-item" onclick="switchPage('settings')"><span class="nav-icon">⚙️</span><br>Settings</div>
+    </nav>
+    
+    <!-- Custom Alert Modal -->
+<div id="custom-alert-modal" class="modal">
+    <div class="modal-content" style="max-width: 320px; height: auto; border-radius: 28px; text-align: center;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1e3a2f, #2e7d32); border-radius: 28px 28px 0 0; justify-content: center;">
+            <h2 id="alert-title" style="margin: 0; font-size: 20px;">📢 Notification</h2>
+        </div>
+        <div class="modal-body" id="alert-message" style="padding: 24px 20px; font-size: 15px; line-height: 1.6; color: #1e293b; text-align: left; white-space: pre-line;">
+            Alert message here
+        </div>
+        <div class="modal-footer" style="padding: 16px; display: flex; gap: 12px; justify-content: center;">
+            <button id="alert-ok-btn" class="btn-block" style="background: linear-gradient(135deg, #2e7d32, #1a5e20); margin: 0; padding: 12px; border-radius: 40px; width: auto; min-width: 100px;">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirm Modal (Yes/No) -->
+<div id="custom-confirm-modal" class="modal">
+    <div class="modal-content" style="max-width: 320px; height: auto; border-radius: 28px; text-align: center;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #1e3a2f, #2e7d32); border-radius: 28px 28px 0 0; justify-content: center;">
+            <h2 id="confirm-title" style="margin: 0; font-size: 20px;">❓ Confirm</h2>
+        </div>
+        <div class="modal-body" id="confirm-message" style="padding: 24px 20px; font-size: 15px; line-height: 1.6; color: #1e293b; text-align: left; white-space: pre-line;">
+            Confirm message here
+        </div>
+        <div class="modal-footer" style="padding: 16px; display: flex; gap: 12px; justify-content: center;">
+            <button id="confirm-cancel-btn" class="btn-block" style="background: #757575; margin: 0; padding: 12px; border-radius: 40px; width: auto; min-width: 100px;">Cancel</button>
+            <button id="confirm-ok-btn" class="btn-block" style="background: linear-gradient(135deg, #2e7d32, #1a5e20); margin: 0; padding: 12px; border-radius: 40px; width: auto; min-width: 100px;">OK</button>
+        </div>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+  
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('Service Worker registered'))
+    .catch((err) => console.log('SW failed:', err));
+}
+  </script>
+  
+</body>
+</html>

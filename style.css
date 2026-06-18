@@ -1,0 +1,718 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; background: #f4f6f8; color: #333; padding-bottom: 80px; }
+header { background: #1a5e20; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; font-size: 14px; }
+main { padding: 12px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.card { background: white; padding: 16px; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #edf0f2; }
+.today-card { background: #e8f5e9; border-left: 5px solid #2e7d32; }
+.cost-card { background: #fff3e0; border-left: 5px solid #ff9800; }
+.profit-card { background: #e0f2f1; border-left: 5px solid #009688; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+input, select { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; background: #fafafa; transition: 0.2s; }
+input:focus, select:focus { border-color: #2e7d32; background: white; outline: none; }
+.input-group { margin-bottom: 12px; }
+.input-group label { font-size: 13px; font-weight: bold; color: #555; display: block; margin-bottom: 2px; }
+
+.btn-block { width: 100%; padding: 14px; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+.btn-search-product { background: #1976d2; }
+.btn-complete { background: #2e7d32; margin-top: 10px; }
+
+.btn-save-product { background: #2e7d32 !important; display: block !important; margin-top: 8px; }
+.btn-update-product { background: #1565c0 !important; color: white; margin-top: 8px; }
+.btn-cancel-edit { background: #757575 !important; color: white; margin-top: 6px; }
+.btn-save-customer { background: #1a5e20; }
+
+li { padding: 14px; border-bottom: 1px solid #eee; font-size: 14px; background: #fafafa; margin-bottom: 8px; border-radius: 8px; border: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+.li-content { flex: 1; padding-right: 10px; }
+.li-actions { display: flex; gap: 8px; }
+
+.btn-icon { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
+.btn-edit { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+.btn-delete { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+.stock-tag { background: #e3f2fd; color: #0d47a1; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+.alert-tag{
+ background:#ffebee;
+ color:#c62828;
+ padding:4px 8px;
+ border-radius:6px;
+ font-size:12px;
+ font-weight:bold;
+ animation:pulse 1.5s infinite;
+}
+    @keyframes pulse{
+ 0%{opacity:1;}
+ 50%{opacity:.5;}
+ 100%{opacity:1;}
+}
+
+.bottom-nav { 
+    position: fixed; bottom: 0; left: 0; width: 100%; background: white; 
+    display: flex; border-top: 1px solid #e0e0e0; height: 60px; /* အမြင့်နည်းနည်းတိုးပေးလိုက်ပါတယ် */
+    z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); 
+}
+
+.nav-item { 
+    flex: 1; text-align: center; font-size: 13px; /* စာသား size */
+    padding-top: 5px; color: #666; cursor: pointer; line-height: 0.8; 
+}
+
+.nav-icon { 
+    font-size: 22px; /* Icon ကို ကြီးစေမယ့်နေရာ (လိုအပ်ရင် 26px အထိ တိုးလို့ရပါတယ်) */
+    display: block; 
+}
+
+.nav-item.active { color: #2e7d32; font-weight: bold; background: #f1f8f3; }
+
+.cart-empty-text { text-align: center; color: #999; padding: 20px 0; font-style: italic; }
+.cart-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #e0e0e0; font-size: 14px; }
+.qty-btn { width: 30px; height: 30px; background: #f0f0f0; border: 1px solid #ccc; font-weight: bold; border-radius: 6px; cursor: pointer; margin: 0 6px; font-size: 16px; }
+
+.summary-box { background: #fdfdfd; padding: 14px; border-radius: 8px; margin: 12px 0; border: 1px solid #eef0f2; }
+.summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; color: #444; font-weight: bold; }
+.summary-divider { border: 0; border-top: 1px solid #ddd; margin: 8px 0; }
+.font-discount { color: #e53935; }
+.font-grand-total { font-size: 19px; color: #2e7d32; font-weight: 900; }
+
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+.modal.open { display: flex; }
+.modal-content { background: white; width: 92%; max-width: 480px; height: 80%; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { padding: 16px; background: #1976d2; color: white; display: flex; justify-content: space-between; align-items: center; }
+.close-btn { background: none; border: none; color: white; font-size: 32px; cursor: pointer; line-height: 1; }
+.modal-body { padding: 14px; flex: 1; overflow-y: auto; background: #f4f6f8; }
+.modal-footer { padding: 14px; border-top: 1px solid #eee; background: white; }
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+/* Mobile responsive - 2 columns on small screens */
+@media (max-width: 390px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.grid-item { background: white; border: 2px solid #e0e0e0; border-radius: 10px; padding: 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; position: relative; min-height: 95px; }
+
+.grid-item.out-of-stock { background: #f0f0f0 !important; border-color: #d0d0d0 !important; opacity: 0.6; cursor: not-allowed; }
+.grid-item.out-of-stock p { color: #777 !important; }
+
+.grid-item h4 { font-size: 13px; color: #333; margin-bottom: 4px; font-weight: bold; word-break: break-word; }
+.grid-item p { font-size: 12px; color: #1976d2; font-weight: bold; }
+.grid-item span { font-size: 11px; color: #777; }
+.grid-item.selected { border-color: #2e7d32; background: #e8f5e9; }
+.badge { position: absolute; top: -6px; right: -6px; background: #2e7d32; color: white; font-size: 11px; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+/* ဘောက်ချာ ဇယားပုံစံအတွက် သီးသန့် CSS */
+.receipt-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+.receipt-table th { border-bottom: 1px solid #333; padding: 6px 4px; text-align: left; font-weight: bold; background: #f5f5f5; }
+.receipt-table td { padding: 8px 4px; border-bottom: 1px dashed #ddd; vertical-align: middle; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+@media print {
+    body { background: white; color: black; padding-bottom: 0; }
+    .no-print { display: none !important; }
+    .modal { position: absolute; background: none; display: flex !important; top: 0; left: 0; width: 100%; height: auto; }
+    .modal-content { width: 100% !important; max-width: 100% !important; box-shadow: none; border: none; height: auto !important; }
+    .modal-body { padding: 0 !important; background: white !important; }
+}
+
+.history-li{
+    display:block;
+}
+
+.history-header{
+    margin-bottom:10px;
+}
+
+.history-btns{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.btn-small-edit{
+    flex:1;
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    background:#1976d2;
+    color:white;
+    cursor:pointer;
+}
+
+.btn-small-del{
+    flex:1;
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    background:#c62828;
+    color:white;
+    cursor:pointer;
+}
+
+.edit-item-row{
+    background:white;
+    border:1px solid #eee;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+.top-sell-row{
+    margin-bottom:10px;
+}
+
+.top-sell-info{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:4px;
+}
+
+.progress-bar-bg{
+    width:100%;
+    height:10px;
+    background:#eeeeee;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-bar-fill{
+    height:100%;
+    background:#2e7d32;
+}
+
+/* ========== REPORTS PAGE STYLES ========== */
+
+/* Transaction history list items */
+#report-sales-list li {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e8ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+#report-sales-list li:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+
+/* Report Tabs */
+.report-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #f1f5f9;
+    color: #475569;
+    transition: all 0.2s;
+}
+
+.report-tab.active {
+    background: linear-gradient(135deg, #2e7d32, #1a5e20);
+    color: white;
+}
+
+/* Customer name and amount row */
+.sale-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.sale-customer {
+    font-weight: 700;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.sale-amount {
+    font-weight: 800;
+    font-size: 18px;
+    color: #2e7d32;
+}
+
+.sale-date {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Button container */
+.sale-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+/* View button */
+.btn-view {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-view:hover {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    transform: scale(0.98);
+}
+
+/* Delete button */
+.btn-delete-sale {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #d32f2f, #c62828);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete-sale:hover {
+    background: linear-gradient(135deg, #c62828, #b71c1c);
+    transform: scale(0.98);
+}
+
+/* Today badge */
+.today-badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 10px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+/* ========== EDIT VOUCHER MODAL STYLES ========== */
+.edit-item-row {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.edit-item-row p {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.edit-item-row input {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.edit-item-row input:focus {
+    border-color: #2e7d32;
+    outline: none;
+}
+
+/* Modal footer buttons */
+#edit-voucher-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+}
+
+#edit-voucher-modal .modal-footer .btn-block {
+    flex: 1;
+    margin: 0;
+    border-radius: 40px;
+}
+
+/* ========== VOUCHER MODAL STYLES ========== */
+#voucher-modal .modal-content {
+    max-width: 450px;
+    border-radius: 24px;
+}
+
+#voucher-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+    flex-direction: row;
+    padding: 16px;
+}
+
+#voucher-modal .modal-footer .btn-block {
+    flex: 1;
+    margin: 0;
+    border-radius: 40px;
+}
+
+/* Receipt print styles */
+.receipt-print-area {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* ========== PRODUCT GRID STYLES ========== */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.grid-item {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.grid-item:active {
+    transform: scale(0.97);
+}
+
+.grid-item.selected {
+    border-color: #2e7d32;
+    background: #f1f8f3;
+}
+
+.grid-item.out-of-stock {
+    opacity: 0.5;
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.grid-item h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #1e293b;
+}
+
+.grid-item p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1976d2;
+    margin-bottom: 4px;
+}
+
+.grid-item span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #2e7d32;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========== CART STYLES ========== */
+.cart-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.qty-btn {
+    width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 4px;
+    font-size: 16px;
+}
+
+.qty-btn:active {
+    background: #e2e8f0;
+}
+
+/* ========== SUMMARY BOX ========== */
+.summary-box {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.font-discount {
+    color: #e53935;
+}
+
+.font-grand-total {
+    font-size: 20px;
+    font-weight: 800;
+    color: #2e7d32;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 400px) {
+    .sale-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .sale-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-view, .btn-delete-sale {
+        width: 100%;
+    }
+}
+
+/* Product Modal Done Button */
+#product-modal .modal-footer {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #eef2f6;
+}
+
+#product-modal .modal-footer .btn-block {
+    background: linear-gradient(135deg, #2e7d32, #1a5e20);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+#product-modal .modal-footer .btn-block:hover {
+    background: linear-gradient(135deg, #1a5e20, #0d3d12);
+    transform: scale(0.98);
+}
+
+#product-modal .modal-footer .btn-block:active {
+    transform: scale(0.96);
+}
+
+/* Default print styles (80mm) */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .modal {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        display: block !important;
+    }
+    
+    .modal-content {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .receipt-table td, .receipt-table th {
+        font-size: 12px;
+        padding: 4px;
+    }
+}
+
+/* 58mm Thermal Printer Styles */
+.print-58mm .modal-content {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 auto;
+    font-size: 10px;
+}
+
+.print-58mm .receipt-table td,
+.print-58mm .receipt-table th {
+    font-size: 9px !important;
+    padding: 2px 2px !important;
+}
+
+.print-58mm h2 {
+    font-size: 14px !important;
+}
+
+.print-58mm .summary-row {
+    font-size: 10px !important;
+}
+
+.print-58mm .font-grand-total {
+    font-size: 12px !important;
+}
+
+.print-58mm div {
+    font-size: 9px !important;
+}
+
+/* 80mm Standard Styles */
+.print-80mm .modal-content {
+    width: 80mm !important;
+    max-width: 80mm !important;
+    margin: 0 auto;
+    font-size: 12px;
+}
+
+.print-80mm .receipt-table td,
+.print-80mm .receipt-table th {
+    font-size: 11px !important;
+    padding: 4px !important;
+}
+
+.print-80mm h2 {
+    font-size: 16px !important;
+}
+/* ========== EXTRA UI IMPROVEMENTS ========== */
+
+/* Card Hover Effect */
+.card { 
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* Button Click Effect */
+.btn-block:active {
+    transform: scale(0.97);
+}
+
+/* Grid Item Hover */
+.grid-item {
+    transition: all 0.2s ease;
+}
+
+.grid-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #2e7d32;
+}
+
+/* Page Transition */
+.page {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Glassmorphism Navigation Bar */
+.bottom-nav { 
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: none;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+
+/* Home Card Icons */
+.today-card::before {
+    content: "📈";
+    font-size: 30px;
+    display: block;
+    text-align: center;
+    margin-bottom: 8px;
+}
+/* Product Grid View */
+.product-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+.product-card {
+    background: white;
+    border-radius: 20px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+/* Voucher with Logo */
+.voucher-logo {
+    width: 50px;
+    height: 50px;
+    background: #2e7d32;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
