@@ -2,7 +2,7 @@
   "name": "SIT MHAN Distribution",
   "short_name": "SIT MHAN",
   "description": "POS System for Retail Shop. Sales, Products, Customers Management.",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2e7d32",
