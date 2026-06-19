@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-  <link rel="manifest" href="manifest.json">
+  
+  <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#2e7d32">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -305,21 +306,15 @@ window.onload = function() {
     </div>
 </div>
 
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
   
-  <script>
+<script>
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-            .then(function(reg) {
-                console.log('Service Worker Registered Successfully!', reg);
-            })
-            .catch(function(err) {
-                console.log('Service Worker Registration Failed!', err);
-            });
-    });
+  navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then(() => console.log('SW registered'))
+    .catch((err) => console.log('SW failed:', err));
 }
-  </script>
+</script>
   
 </body>
 </html>
